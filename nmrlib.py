@@ -136,7 +136,7 @@ class BrukerData:
 
       with open(cfile, 'rt') as f:
          for line in f:
-               if line[0].isdigit():
+               if line[0].isdigit() or line[0] == '-':
                   for entry in line.split():
                      if entry is not '0':
                         try:
