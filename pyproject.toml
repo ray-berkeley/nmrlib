@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+
+[project]
+name = "nmrlib"
+version = "0.0.0"
+description = "Wrappers for nmrglue utilities"
+authors = [
+    {name = "Ray Berkeley", email = "rberkele@ucsd.edu"}
+]
+license = {text = "GNU General Public License v3 (GPLv3)"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+readme = "README.md"
+dependencies = [
+    "holoviews",
+    "matplotlib",
+    "numpy",
+    "nmrglue",
+    "pandas",
+    "pynmrstar",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
