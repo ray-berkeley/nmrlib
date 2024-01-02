@@ -138,7 +138,7 @@ class BrukerData:
          for line in f:
                if line[0].isdigit() or line[0] == '-':
                   for entry in line.split():
-                     if entry is not '0':
+                     if entry != '0':
                         try:
                            clevels.append(float(entry))
                         except ValueError:
