@@ -15,7 +15,7 @@ classifiers = [
 readme = "README.md"
 dependencies = [
     "holoviews",
-    "matplotlib",
+    "matplotlib <= 3.2.2",
     "numpy",
     "nmrglue",
     "pandas",
