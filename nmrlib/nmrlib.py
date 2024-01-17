@@ -20,15 +20,13 @@ General Methods:
 # Import necessary libraries
 import holoviews as hv
 from holoviews import opts
-
-hv.extension("matplotlib", logo=False)
-
 import matplotlib.pyplot as plt
 import nmrglue as ng
 import numpy as np
 import pandas as pd
 import pynmrstar
 
+hv.extension("matplotlib", logo=False)
 # This gives us the cs values as floats instead of strings
 pynmrstar.CONVERT_DATATYPES = True
 
@@ -144,7 +142,29 @@ class BrukerData:
                 f"The largest value is {np.amax(self.data)} and the smallest is {np.amin(self.data)}"
             )
 
-    def get_clevels(self):
+    def get_clevels_from_data(self, factor=1.2, levels=20, include_negatives=False):
+        """
+        Calculates contour levels using the snr and std of the input data.
+
+        Returns
+        -------
+        A list of the contour levels last saved by TopSpin.
+        """
+        data = self.data.flatten()
+
+        mean = np.mean(data)
+        std = np.std(data)
+        base_contour = mean + std
+
+        clevels = [base_contour * (factor**i) for i in range(levels)]
+
+        if include_negatives:
+            negatives = [-x for x in clevels]
+            clevels = clevels + negatives
+
+        return clevels
+
+    def get_clevels_from_file(self):
         """
         Attempts to parse the clevels file from the pdata directory
         specified by init.
@@ -335,7 +355,7 @@ class UCSFData:
             f"The largest value is {np.amax(self.data)} and the smallest is {np.amin(self.data)}"
         )
 
-    def get_clevels(self, clevels):
+    def get_clevels(self, clevels=None):
         """
         It isn't clear where the contour levels are saved by Sparky, so this method will just set the
         clevels parameter for the UCSFData class as defined by the user. These values can be copied
@@ -344,8 +364,32 @@ class UCSFData:
         clevels = contour_min * contour_factor ** np.arange(contour_num)
         clevels = np.where(clevels==0, contour_min, clevels)
         """
+        if not clevels:
+            clevels = self.get_clevels_from_data(self.data)
 
         self.clevels = clevels
+
+    def get_clevels_from_data(self, factor=1.2, levels=20, include_negatives=False):
+        """
+        Calculates contour levels using the snr and std of the input data.
+
+        Returns
+        -------
+        A list of the contour levels last saved by TopSpin.
+        """
+        data = self.data.flatten()
+
+        mean = np.mean(data)
+        std = np.std(data)
+        base_contour = mean + std
+
+        clevels = [base_contour * (factor**i) for i in range(levels)]
+
+        if include_negatives:
+            negatives = [-x for x in clevels]
+            clevels = clevels + negatives
+
+        return clevels
 
     def get_contours(self, scale=True, **kwargs):
         """
