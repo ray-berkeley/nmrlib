@@ -153,8 +153,10 @@ class BrukerData:
         data = self.data.flatten()
 
         mean = np.mean(data)
+        median = np.median(data)
         std = np.std(data)
-        base_contour = mean + std
+        # There isn't a one-size-fits-all here
+        base_contour = median + (1.5 * std)
 
         clevels = [base_contour * (factor**i) for i in range(levels)]
 
