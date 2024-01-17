@@ -195,7 +195,7 @@ class BrukerData:
 
         return clevels
 
-    def get_contours(self, scale=True, **kwargs):
+    def get_contours(self, scale=True, clevels=None, **kwargs):
         """
         Builds contours for Bruker data using the QuadContourSet object from matplotlib.
 
@@ -233,10 +233,13 @@ class BrukerData:
 
         # Determine contour levels for this spectrum, or use levels
         # defined in the method call.
-        if "clevels" in kwargs:
-            clevels = kwargs.get("clevels")
+
+        if clevels == "data":
+            clevels = self.get_clevels_from_data()
+        elif isinstance(clevels, list):
+            clevels = clevels
         else:
-            clevels = self.get_clevels()
+            clevels = self.get_clevels_from_file()
 
         # Build meshgrids for ppm values and adjust the referencing to
         # match the referencing defined in the procpars file.
@@ -365,9 +368,11 @@ class UCSFData:
         clevels = np.where(clevels==0, contour_min, clevels)
         """
         if not clevels:
-            clevels = self.get_clevels_from_data(self.data)
+            clevels = self.get_clevels_from_data()
 
         self.clevels = clevels
+
+        return clevels
 
     def get_clevels_from_data(self, factor=1.2, levels=20, include_negatives=False):
         """
@@ -391,7 +396,7 @@ class UCSFData:
 
         return clevels
 
-    def get_contours(self, scale=True, **kwargs):
+    def get_contours(self, scale=True, clevels=None):
         """
         Builds contours for UCSF data using the QuadContourSet object from matplotlib.
 
@@ -410,13 +415,10 @@ class UCSFData:
 
         # Determine contour levels for this spectrum, or use levels
         # defined in the method call.
-        if "clevels" in kwargs:
-            clevels = kwargs.get("clevels")
+        if isinstance(clevels, list):
+            clevels = clevels
         else:
-            try:
-                clevels = self.clevels()
-            except:
-                print("Contour levels have not been set!")
+            clevels = self.get_clevels_from_data()
 
         # Build meshgrids for ppm values and generate contours. Only works for 2D data.
         if scale:
